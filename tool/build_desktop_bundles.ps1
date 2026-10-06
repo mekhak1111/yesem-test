@@ -35,8 +35,8 @@ $versionLine = (Invoke-Flutter --version | Select-String -Pattern 'Flutter (\d+)
 $major = [int]$versionLine.Matches[0].Groups[1].Value
 $minor = [int]$versionLine.Matches[0].Groups[2].Value
 $useFlavors = ($major -gt 3) -or ($major -eq 3 -and $minor -ge 47)
-if ($useFlavors) { Write-Host "Flutter $major.$minor: building with --flavor" }
-else { Write-Host "Flutter $major.$minor: no Windows flavors before 3.47, using --dart-define=YESEM_APP" }
+if ($useFlavors) { Write-Host "Flutter ${major}.${minor}: building with --flavor" }
+else { Write-Host "Flutter ${major}.${minor}: no Windows flavors before 3.47, using --dart-define=YESEM_APP" }
 
 function Build-Role([string]$Role, [string]$Exe) {
   Write-Host "== Building $Role ($Mode) =="
