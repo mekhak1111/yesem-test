@@ -1,0 +1,18 @@
+Package: yesem
+Version: @VERSION@
+Architecture: @ARCH@
+Maintainer: Volo <support@volo.global>
+Installed-Size: @INSTALLED_SIZE@
+Depends: @DEPENDS@
+Section: utils
+Priority: optional
+Description: YesEm Desktop and YesEm Pin Code Manager (test build)
+ YesEm Desktop signs documents with an ID card in a card reader. The signature
+ PIN is entered in the separate YesEm Pin Code Manager, which Desktop starts
+ when you click Sign, and is handed back over loopback HTTP with a one-time
+ token.
+ .
+ Both applications are installed under /opt/yesem, where Desktop finds the
+ helper. Only Desktop has a launcher in the applications menu.
+ .
+ This is a test build: Desktop displays the PIN it received.

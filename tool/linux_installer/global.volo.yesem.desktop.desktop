@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.5
+Name=YesEm Desktop
+Comment=Sign documents with your ID card
+Exec=yesem-desktop
+Icon=global.volo.yesem.desktop
+Terminal=false
+Categories=Office;
+Keywords=signature;ID card;PIN;
+StartupNotify=true
+StartupWMClass=global.volo.yesem.desktop

@@ -1,0 +1,13 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: YesEm
+Upstream-Contact: Volo <support@volo.global>
+
+Files: *
+Copyright: 2026 Volo
+License: Proprietary
+ All rights reserved. This package is distributed by Volo to its customers
+ and testers; redistribution requires written permission.
+ .
+ It bundles the Flutter engine (libflutter_linux_gtk.so), which is
+ Copyright 2013 The Flutter Authors and distributed under the BSD 3-Clause
+ License.

@@ -1,0 +1,6 @@
+yesem (@VERSION@) unstable; urgency=medium
+
+  * YesEm Desktop and YesEm Pin Code Manager @VERSION@, built from pubspec.yaml
+    version @PUBSPEC_VERSION@ by tool/build_linux_installer.sh.
+
+ -- Volo <support@volo.global>  @DATE@

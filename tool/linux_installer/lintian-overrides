@@ -1,0 +1,3 @@
+# YesEm is third-party software installed under /opt, as the FHS allows for
+# add-on packages and as lintian flags for every such package.
+yesem: dir-or-file-in-opt
