@@ -53,6 +53,59 @@ window → type a PIN → Confirm → the PIN shows in Desktop. Then:
 Blank window or GL errors (VM without 3D acceleration):
 `LIBGL_ALWAYS_SOFTWARE=1 fvm flutter run -d linux --flavor desktop`.
 
+## 4. Debian package (`.deb`)
+
+Done on 2026-10-07 in the Ubuntu 26.04 arm64 VM. `tool/build_linux_installer.sh`
+mirrors `tool/build_macos_installer.sh`; decisions, so they are not re-litigated:
+
+* **One package `yesem`** with both apps, `/opt/yesem/desktop/yesem-desktop` and
+  `/opt/yesem/pincode/yesem-pincode`, each with its own `lib/` and `data/`,
+  copied from `tool/build_desktop_bundles.sh` output. `/opt` because the
+  Flutter bundles are self-contained trees, not FHS-split files; lintian's
+  `dir-or-file-in-opt` is overridden in `tool/linux_installer/lintian-overrides`.
+* **No Dart change**: `PinCodeManagerLocator` already lists the sibling
+  `pincode/` folder and `/opt/yesem/pincode/`. `/usr/bin/yesem-desktop` is a
+  symlink; `Platform.resolvedExecutable` resolves it, so the helper is found
+  when Desktop starts from the launcher, from `yesem-desktop` or by full path.
+* **Application ids per flavor** on Linux: `linux/CMakeLists.txt` sets
+  `APPLICATION_ID` to `global.volo.yesem.desktop` / `.pincode` from
+  `FLUTTER_APP_FLAVOR` (available after `add_subdirectory(flutter)`). The
+  launcher is `global.volo.yesem.desktop.desktop` with the same
+  `StartupWMClass`, so GNOME pairs the Desktop window with its icon and does
+  not group the helper window with it. Only Desktop has a launcher.
+* **Icons**: the PNGs from `macos/Runner/Assets.xcassets/AppIcon.appiconset`
+  (16 to 512 px) go to `/usr/share/icons/hicolor/<size>x<size>/apps/`.
+  No maintainer scripts: dpkg triggers of `desktop-file-utils` and
+  `hicolor-icon-theme` refresh the caches.
+* **Version** `0.1.0+1` → `0.1.0-1`; `YESEM_DEB_VERSION` overrides it.
+  **Architecture** from `dpkg --print-architecture` (arm64 here, amd64 on x64).
+* **Depends** from `dpkg-shlibdeps` over the two runners and all bundled
+  `.so` files, staged under `debian/yesem/` so the bundled engine and plugins
+  count as the package's own libraries. Only missing-library/symbol warnings
+  are shown (`--warnings=6`); Flutter over-links GTK and the rest is noise.
+* **Unsigned**. Maintainer `Volo <support@volo.global>` (lintian requires an
+  address; change it in `tool/linux_installer/control.in` if wrong).
+
+Test plan (the `apt` steps need sudo):
+
+```sh
+tool/build_linux_installer.sh --skip-build          # after tool/build_desktop_bundles.sh
+lintian dist/linux/yesem_*.deb                      # sudo apt install lintian
+sudo apt install ./dist/linux/yesem_0.1.0-1_arm64.deb
+# Activities → "YesEm Desktop" → Sign → PIN → shown in Desktop
+sudo apt install ./dist/linux/yesem_0.1.0-1_arm64.deb   # reinstall same version
+YESEM_DEB_VERSION=0.1.1-1 tool/build_linux_installer.sh --skip-build
+sudo apt install ./dist/linux/yesem_0.1.1-1_arm64.deb   # upgrade: one copy, dpkg -l yesem
+sudo apt remove yesem                               # /opt/yesem and the launcher gone
+```
+
+Driving the click-through without a mouse: with
+`gsettings set org.gnome.desktop.interface toolkit-accessibility true` the
+Flutter windows expose their widgets over AT-SPI (`python3-gi` with
+`Atspi 2.0`), so the Sign/Confirm buttons and the PIN field can be scripted.
+GNOME only gives the helper keyboard focus when it was opened from a focused
+Desktop window; otherwise the PIN field ignores text.
+
 ## Notes
 
 * Do not build in a VMware shared folder; keep the project on the guest disk.

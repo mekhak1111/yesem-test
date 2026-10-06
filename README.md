@@ -170,6 +170,52 @@ Silent install and uninstall (administrator PowerShell):
 `& "C:\Program Files\YesEm\unins000.exe" /VERYSILENT`. `-SkipBuild` reuses the
 existing `dist\windows` bundles.
 
+## Linux installer
+
+`tool/build_linux_installer.sh` produces `dist/linux/yesem_<version>_<arch>.deb`,
+one Debian package with both applications, the Linux counterpart of the
+macOS `.pkg`:
+
+1. `tool/build_desktop_bundles.sh release` (both flavors; Flutter builds only
+   the machine's own architecture, so arm64 and amd64 packages come from
+   different machines).
+2. Stage the package root: `/opt/yesem/desktop/yesem-desktop` and
+   `/opt/yesem/pincode/yesem-pincode`, each with its own `lib/` and `data/`
+   (runner and plugin libraries stripped), the symlink
+   `/usr/bin/yesem-desktop`, a launcher for Desktop only
+   (`/usr/share/applications/global.volo.yesem.desktop.desktop`) with the
+   icon set from `macos/Runner/Assets.xcassets` under
+   `/usr/share/icons/hicolor/`, plus copyright, changelog and lintian
+   overrides from `tool/linux_installer/`.
+3. `dpkg-shlibdeps` computes `Depends` from the binaries and plugin `.so`
+   files, so the package names match the Ubuntu release that builds it
+   (for example `libgtk-3-0t64` on 24.04+).
+4. `DEBIAN/control` from `tool/linux_installer/control.in` and
+   `dpkg-deb --build --root-owner-group`.
+
+The version comes from `pubspec.yaml`: `0.1.0+1` becomes `0.1.0-1`, the
+build number being the Debian revision. `YESEM_DEB_VERSION=0.1.1-1` overrides
+it, for instance to test an upgrade. `--skip-build` reuses the existing
+release bundles. The package is unsigned; signing happens at the APT
+repository level later.
+
+On Linux each flavor has its own GTK application id,
+`global.volo.yesem.desktop` and `global.volo.yesem.pincode` (set in
+`linux/CMakeLists.txt` from `FLUTTER_APP_FLAVOR`), so the launcher's
+`StartupWMClass` pairs the Desktop window with its icon and the helper window
+is not grouped with it. Desktop started through the `/usr/bin` symlink still
+finds the helper: `Platform.resolvedExecutable` resolves the link and the
+sibling `pincode/` folder, as well as `/opt/yesem/pincode/`, are on the search
+list below. No Dart change was needed for the package layout.
+
+```sh
+tool/build_linux_installer.sh                 # or --skip-build
+lintian dist/linux/yesem_*.deb                # apt install lintian
+sudo apt install ./dist/linux/yesem_0.1.0-1_arm64.deb
+yesem-desktop                                 # or "YesEm Desktop" in Activities
+sudo apt remove yesem
+```
+
 ## How Desktop and the Pin Code Manager talk
 
 Loopback HTTP, chosen over a raw socket because it needs no extra packages, is
