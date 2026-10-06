@@ -22,10 +22,12 @@ log a PIN.
   the wire protocol and command-line argument names.
 - `macos/` flavors are Xcode configurations/schemes (`tool/add_macos_flavors.py`).
   `windows/runner` and `linux/runner` read `FLUTTER_APP_FLAVOR` in CMake for the window
-  title. These two runners were written on macOS and never compiled there yet.
+  title. The Windows runner is verified on Windows 11 ARM64; the Linux one is not compiled yet.
 - `tool/build_desktop_bundles.sh|.ps1` build both roles into `dist/<os>/{desktop,pincode}`.
 - `tool/build_macos_installer.sh` + `tool/macos_installer/` build the signed/notarizable
   `.pkg` into `dist/macos/` (unsigned without `APP_SIGN_IDENTITY`/`PKG_SIGN_IDENTITY`).
+- `tool/build_windows_installer.ps1` + `tool/windows_installer/yesem.iss` build the Inno Setup
+  installer `dist\windows\YesEm-Setup-<version>.exe` (unsigned without `-SignCommand`).
 - `tool/vm/` scripts and checklists for testing in the Ubuntu and Windows VMs.
 
 ## Toolchain

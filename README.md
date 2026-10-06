@@ -86,6 +86,7 @@ flutter test test_e2e                      # macOS: launches the real built help
 tool/build_macos_installer.sh              # macOS: dist/macos/YesEm-<version>.pkg
 tool/build_desktop_bundles.sh              # Linux: dist/linux/{desktop,pincode}
 tool\build_desktop_bundles.ps1             # Windows: dist\windows\{desktop,pincode}
+tool\build_windows_installer.ps1           # Windows: dist\windows\YesEm-Setup-<version>.exe
 ```
 
 The bundle scripts build both roles (with `--flavor` on 3.47+, with the define
@@ -125,6 +126,49 @@ NOTARY_PROFILE=yesem-notary tool/build_macos_installer.sh
 Install from the command line with `sudo installer -pkg dist/macos/YesEm-0.1.0.pkg -target /`,
 and remove the apps again with `sudo tool/macos_installer/uninstall.sh`.
 `--skip-build` reuses the existing release builds.
+
+## Windows installer
+
+`tool\build_windows_installer.ps1` produces `dist\windows\YesEm-Setup-<version>.exe`,
+an [Inno Setup 6](https://jrsoftware.org/isinfo.php) installer
+(`winget install --id JRSoftware.InnoSetup -e`) that installs both apps per
+machine, each in its own folder, where Desktop finds the helper in the sibling
+`pincode\` folder:
+
+```
+C:\Program Files\YesEm\desktop\yesem-desktop.exe
+C:\Program Files\YesEm\pincode\yesem-pincode.exe
+```
+
+1. `tool\build_desktop_bundles.ps1` (release): both flavors into `dist\windows\`.
+2. Copy the Visual C++ runtime (`msvcp140.dll`, `vcruntime140.dll`,
+   `vcruntime140_1.dll`) from the Visual Studio Build Tools redist folder next to
+   each `.exe`, so the apps start on a PC without the VC++ redistributable.
+3. Sign both `.exe` files, if `-SignCommand` is given.
+4. `ISCC.exe tool\windows_installer\yesem.iss`: version from `pubspec.yaml`,
+   architecture (`arm64` or `x64compatible`) from the built `yesem-desktop.exe`,
+   so the same files give an arm64 installer on an ARM PC and an x64 one on x64.
+
+The installer: AppName "YesEm", publisher "Volo", a fixed `AppId` (never change
+it: upgrades and the single Settings → Apps entry depend on it), Start menu
+shortcut for YesEm Desktop only (desktop icon optional), Windows 10 or newer,
+administrator prompt. Running apps are closed before files are replaced
+(`CloseApplications`) and before uninstalling. Installing the same version again
+repairs; a higher `pubspec.yaml` version upgrades in place.
+
+Without `-SignCommand` everything is unsigned and SmartScreen warns on other
+PCs. With a code-signing certificate the command signs both executables, the
+installer and its uninstaller (Inno Setup `SignTool=yesem`); the file name is
+appended:
+
+```powershell
+tool\build_windows_installer.ps1 -SignCommand '"C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\arm64\signtool.exe" sign /fd SHA256 /sha1 <thumbprint> /tr http://timestamp.digicert.com /td SHA256'
+```
+
+Silent install and uninstall (administrator PowerShell):
+`dist\windows\YesEm-Setup-0.1.0.exe /VERYSILENT /SUPPRESSMSGBOXES` and
+`& "C:\Program Files\YesEm\unins000.exe" /VERYSILENT`. `-SkipBuild` reuses the
+existing `dist\windows` bundles.
 
 ## How Desktop and the Pin Code Manager talk
 
@@ -175,8 +219,10 @@ the port, token and request id into the helper's **Manual connection** form.
   the helper window is sized as a dialog in `MainFlutterWindow.swift`. On
   Windows and Linux the title comes from CMake when built with a flavor, and
   from Dart (`window_manager`) otherwise; the helper window is sized from Dart.
-* The Windows and Linux runners were configured on macOS and have **not been
-  compiled here**; the first build on those platforms is the real check.
+* The Windows runner compiled and passed the test plan on Windows 11 ARM64
+  (Flutter 3.47.4, VS 2022 Build Tools) without changes. The Linux runner was
+  configured on macOS and has **not been compiled yet**; the first build on
+  Linux is the real check.
   `tool/vm/UBUNTU_VM.md` walks through doing that on a VMware Fusion Ubuntu VM
   (`tool/vm/ubuntu_setup.sh` runs inside the guest, `tool/vm/ubuntu_from_mac.sh`
   pushes the project in from the Mac). `tool/vm/WINDOWS_VM.md` does the same for
