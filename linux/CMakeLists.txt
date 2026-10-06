@@ -50,6 +50,15 @@ endfunction()
 set(FLUTTER_MANAGED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/flutter")
 add_subdirectory(${FLUTTER_MANAGED_DIR})
 
+# One application id per flavor, so GNOME can pair each window with its own
+# launcher (StartupWMClass in the .desktop file installed by the .deb) and
+# the helper window is not grouped with Desktop. FLUTTER_APP_FLAVOR is set by
+# the flutter subdirectory above (Flutter 3.47+ with --flavor); builds without
+# a flavor keep the neutral id.
+if(DEFINED FLUTTER_APP_FLAVOR AND FLUTTER_APP_FLAVOR MATCHES "^(desktop|pincode)$")
+  set(APPLICATION_ID "global.volo.yesem.${FLUTTER_APP_FLAVOR}")
+endif()
+
 # System-level dependencies.
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK REQUIRED IMPORTED_TARGET gtk+-3.0)
