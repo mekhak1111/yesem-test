@@ -13,6 +13,7 @@ void main() {
         environment: const <String, String>{},
         exists: (_) => false,
         os: DesktopOs.macos,
+        pathContext: p.posix,
       );
       expect(locator.candidates(), <String>[
         '/repo/build/macos/Build/Products/Debug-desktop/YesEm Pin Code Manager.app',
@@ -32,6 +33,7 @@ void main() {
         },
         exists: (_) => false,
         os: DesktopOs.macos,
+        pathContext: p.posix,
       );
       final candidates = locator.candidates();
       expect(candidates.first, '/custom/PCM.app');
@@ -45,6 +47,7 @@ void main() {
         environment: const <String, String>{},
         exists: (path) => path == wanted,
         os: DesktopOs.macos,
+        pathContext: p.posix,
       );
       expect(found.locate(), wanted);
       final missing = PinCodeManagerLocator(
@@ -52,6 +55,7 @@ void main() {
         environment: const <String, String>{},
         exists: (_) => false,
         os: DesktopOs.macos,
+        pathContext: p.posix,
       );
       expect(missing.locate(), isNull);
     });

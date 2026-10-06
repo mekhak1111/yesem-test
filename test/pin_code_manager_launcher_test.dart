@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
 import 'package:yesem/desktop/pin_code_manager_launcher.dart';
 import 'package:yesem/shared/ipc_protocol.dart';
 
@@ -58,6 +59,8 @@ PinCodeManagerLocator locatorFinding(String? path, DesktopOs os) =>
       environment: const <String, String>{},
       exists: (candidate) => candidate == path,
       os: os,
+      // The fake paths are posix; keep them so on a Windows host too.
+      pathContext: p.posix,
     );
 
 const parameters = LaunchParameters(port: 5000, token: 'tok', requestId: 'req');
