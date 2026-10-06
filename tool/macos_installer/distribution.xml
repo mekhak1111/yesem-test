@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  productbuild distribution definition for the YesEm macOS installer.
+  tool/build_macos_installer.sh substitutes @VERSION@ and passes the two
+  component packages (built with pkgbuild) as its package path.
+-->
+<installer-gui-script minSpecVersion="2">
+    <title>YesEm</title>
+    <organization>global.volo</organization>
+    <welcome file="welcome.html" mime-type="text/html"/>
+    <conclusion file="conclusion.html" mime-type="text/html"/>
+    <options customize="never" require-scripts="false" hostArchitectures="arm64,x86_64"/>
+    <domains enable_localSystem="true" enable_currentUserHome="false" enable_anywhere="false"/>
+    <volume-check>
+        <allowed-os-versions>
+            <os-version min="12.0"/>
+        </allowed-os-versions>
+    </volume-check>
+
+    <choices-outline>
+        <line choice="yesem"/>
+    </choices-outline>
+    <!-- One choice: Desktop cannot sign without the Pin Code Manager. -->
+    <choice id="yesem" title="YesEm @VERSION@">
+        <pkg-ref id="global.volo.yesem.desktop"/>
+        <pkg-ref id="global.volo.yesem.pincode"/>
+    </choice>
+
+    <pkg-ref id="global.volo.yesem.desktop" version="@VERSION@" onConclusion="none">yesem-desktop.pkg</pkg-ref>
+    <pkg-ref id="global.volo.yesem.pincode" version="@VERSION@" onConclusion="none">yesem-pincode.pkg</pkg-ref>
+</installer-gui-script>

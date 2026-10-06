@@ -1,0 +1,5 @@
+// Flavor `pincode`: the YesEm Pin Code Manager helper application.
+#include "AppInfo.xcconfig"
+
+PRODUCT_NAME = YesEm Pin Code Manager
+PRODUCT_BUNDLE_IDENTIFIER = global.volo.yesem.pincode

@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "YesEm Desktop (flavor desktop)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": ["--flavor", "desktop"]
+    },
+    {
+      "name": "YesEm Pin Code Manager (flavor pincode)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": ["--flavor", "pincode"]
+    },
+    {
+      "name": "YesEm Mobile (no flavor)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart"
+    }
+  ]
+}

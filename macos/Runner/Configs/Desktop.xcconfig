@@ -1,0 +1,5 @@
+// Flavor `desktop`: the YesEm Desktop signing application.
+#include "AppInfo.xcconfig"
+
+PRODUCT_NAME = YesEm Desktop
+PRODUCT_BUNDLE_IDENTIFIER = global.volo.yesem.desktop

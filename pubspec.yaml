@@ -1,0 +1,22 @@
+name: yesem
+description: "YesEm test project: Mobile placeholder, Desktop signing app and Pin Code Manager built from one code base."
+publish_to: 'none'
+
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  path: ^1.9.0
+  window_manager: ^0.5.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
