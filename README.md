@@ -156,6 +156,15 @@ administrator prompt. Running apps are closed before files are replaced
 (`CloseApplications`) and before uninstalling. Installing the same version again
 repairs; a higher `pubspec.yaml` version upgrades in place.
 
+**Prerequisite: Crypto Suite Manager** (EKENG). Its installer is bundled and
+offered on the Tasks page as a pre-checked "Install Crypto Suite Manager"
+(hidden when an Apps entry containing "Crypto Suite" already exists). After
+YesEm's files are copied, its own wizard runs (`/S` when YesEm is installed
+silently); if it fails or is cancelled, Setup says so. Uninstalling YesEm leaves
+it installed. The binary is not in git: put `Crypto_Suite_Manager_64.exe` into
+`tool\windows_installer\prereqs\` (or pass `-CryptoSuiteInstaller <path>`); the
+script refuses a file whose SHA-256 differs from the pinned one.
+
 Without `-SignCommand` everything is unsigned and SmartScreen warns on other
 PCs. With a code-signing certificate the command signs both executables, the
 installer and its uninstaller (Inno Setup `SignTool=yesem`); the file name is

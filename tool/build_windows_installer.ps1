@@ -9,7 +9,8 @@
 #   2. copy the Visual C++ runtime (msvcp140, vcruntime140, vcruntime140_1)
 #      next to each .exe, so the apps start on a PC without the VC++ redist
 #   3. optionally sign both .exe files
-#   4. ISCC.exe tool\windows_installer\yesem.iss
+#   4. ISCC.exe tool\windows_installer\yesem.iss, bundling the Crypto Suite
+#      Manager installer (not signed by us: it is EKENG's)
 #
 # The architecture (arm64 or x64) is read from the built yesem-desktop.exe, so
 # the same files give an arm64 installer on an ARM PC and an x64 one on x64.
@@ -21,15 +22,33 @@
 #
 #   tool\build_windows_installer.ps1 -SignCommand 'signtool sign /fd SHA256 /sha1 <thumbprint> /tr http://timestamp.digicert.com /td SHA256'
 #
+# Prerequisite: the Crypto Suite Manager installer (EKENG) is bundled and
+# offered during setup. It is not in git; put it in
+# tool\windows_installer\prereqs\ (see the README there) or pass its path.
+# Its SHA-256 is checked so a different file is never shipped by accident.
+#
 # Usage: tool\build_windows_installer.ps1 [-SkipBuild] [-SignCommand '<signtool …>']
+#          [-CryptoSuiteInstaller <path>]
 param(
   [switch]$SkipBuild,
-  [string]$SignCommand
+  [string]$SignCommand,
+  [string]$CryptoSuiteInstaller = (Join-Path $PSScriptRoot 'windows_installer\prereqs\Crypto_Suite_Manager_64.exe')
 )
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 Set-Location $root
 $out = Join-Path $root 'dist\windows'
+
+# Crypto Suite Manager 2.0.0.0. Update together with prereqs\README.md.
+$CryptoSuiteSha256 = '506C66F6FD372532A165DABB42ABF3552E8952C9EC77A92738DFDA6D6B960336'
+if (-not (Test-Path $CryptoSuiteInstaller)) {
+  throw "Missing Crypto Suite Manager installer: $CryptoSuiteInstaller (see tool\windows_installer\prereqs\README.md)"
+}
+$CryptoSuiteInstaller = (Resolve-Path $CryptoSuiteInstaller).Path
+$hash = (Get-FileHash $CryptoSuiteInstaller -Algorithm SHA256).Hash
+if ($hash -ne $CryptoSuiteSha256) {
+  throw "Unexpected SHA-256 for $CryptoSuiteInstaller`n  got      $hash`n  expected $CryptoSuiteSha256"
+}
 
 # pubspec "version: 0.1.0+1" -> 0.1.0
 $versionLine = Select-String -Path pubspec.yaml -Pattern '^version:\s*([^+\s]+)' | Select-Object -First 1
@@ -91,7 +110,8 @@ $isccArgs = @(
   "/DAppVersion=$version",
   "/DArch=$arch",
   "/DSourceDir=$out",
-  "/DOutputDir=$out"
+  "/DOutputDir=$out",
+  "/DCryptoSuite=$CryptoSuiteInstaller"
 )
 if ($SignCommand) {
   foreach ($app in $apps) {

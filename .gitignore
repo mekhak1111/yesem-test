@@ -47,6 +47,10 @@ app.*.map.json
 # Two-app desktop bundles produced by tool/build_desktop_bundles.*
 dist/
 
+# Third-party installers bundled into the Windows installer; obtained separately.
+/tool/windows_installer/prereqs/*
+!/tool/windows_installer/prereqs/README.md
+
 # FVM: the pinned SDK lives in .fvmrc; the local link/cache does not belong in git
 .fvm/
 
