@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.5
+Name=MyApp
+Comment=What MyApp does, in a few words
+Exec=myapp
+Icon=com.example.myapp
+Terminal=false
+Categories=Office;
+StartupNotify=true
+# GTK/Flutter apps: must equal the app's application id so the dock pairs window and icon
+StartupWMClass=com.example.myapp
