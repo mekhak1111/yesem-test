@@ -61,7 +61,7 @@ Paste this as the first message (the project `CLAUDE.md` gives it the rest):
    `git clone -b 3.47.4 --depth 1 https://github.com/flutter/flutter.git C:\src\flutter`
    and add `C:\src\flutter\bin` to the user PATH. `flutter doctor -v` must show
    a green "Visual Studio" line. Android and Chrome may be red.
-3. `flutter pub get`, `flutter analyze`, `flutter test` (49 tests expected).
+3. `flutter pub get`, `flutter analyze`, `flutter test` (65 tests expected).
 4. First real compile of the Windows runner:
    `flutter build windows --debug --flavor pincode`
    Output: `build\windows\arm64\pincode\runner\Debug\yesem.exe`. Likely trouble
