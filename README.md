@@ -225,6 +225,48 @@ yesem-desktop                                 # or "YesEm Desktop" in Activities
 sudo apt remove yesem
 ```
 
+## Browser → Pin Code Manager (deep link)
+
+A web page can open the Pin Code Manager with a custom-scheme link, hand it a
+session id, and get the result back through its server:
+
+```
+page ──POST /api/sessions──▶ server            (session id, service name)
+page ──yesem-pcm://pin?session=<id>&server=<origin>──▶ OS ──▶ Pin Code Manager
+Pin Code Manager ──GET /api/sessions/<id>──▶ server      (shows the service name)
+Pin Code Manager ──POST …/events {opened|pinEntered|cancelled}──▶ server
+page ──polls GET /api/sessions/<id>──▶ result
+```
+
+The events are the same `PcmEvent`s the Pin Code Manager sends to Desktop
+(`lib/pincode/web_client.dart`). The link is untrusted input: it carries only
+the session id, and `lib/shared/web_link.dart` accepts a server only from its
+allowlist (`WebLinkPolicy.testBed`: `http://127.0.0.1` / `localhost`; a product
+build pins its HTTPS hosts). Like Desktop, the demo page shows the PIN on
+purpose; a real service never receives a PIN.
+
+Per OS:
+
+| | Scheme registration | How the link arrives |
+|---|---|---|
+| macOS | in the app: `CFBundleURLTypes` in `macos/Runner/Info.plist`, one scheme per flavor via `YESEM_URL_SCHEME` (`yesem-pcm` in `PinCodeManager.xcconfig`, `yesem-desktop` in `Desktop.xcconfig`, which ignores links for now) | Apple Event → `AppDelegate.swift` → `yesem/links` channel; also delivered to the running app |
+| Windows | installer: `[Registry]` in `tool/windows_installer/yesem.iss` (`HKA\Software\Classes\yesem-pcm`, removed on uninstall) | command-line argument; each link starts a new process |
+| Linux | `.deb`: hidden `tool/linux_installer/global.volo.yesem.pincode.desktop` with `MimeType=x-scheme-handler/yesem-pcm;` | command-line argument (`%u`); each link starts a new process |
+
+Try it without installing:
+
+```sh
+fvm flutter build macos --debug --flavor pincode     # or tool/build_desktop_bundles.* on Windows/Linux
+tool/web_demo/register_scheme.sh                    # Windows: tool\web_demo\register_scheme.ps1
+fvm dart run tool/web_demo/server.dart              # then open http://127.0.0.1:8787
+```
+
+Click **Sign with ID card**, allow the browser to open the Pin Code Manager,
+type a PIN, Confirm: the page shows "Done" and the PIN. Cancel, an expired
+session (5 minutes) and a link to a server outside the allowlist are reported
+on both sides. `open|start|xdg-open 'yesem-pcm://pin?session=…&server=…'`
+triggers the app without a browser.
+
 ## How Desktop and the Pin Code Manager talk
 
 Loopback HTTP, chosen over a raw socket because it needs no extra packages, is

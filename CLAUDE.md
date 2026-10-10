@@ -32,6 +32,10 @@ log a PIN.
 - `tool/build_linux_installer.sh` + `tool/linux_installer/` build the unsigned `.deb`
   into `dist/linux/` (both apps under `/opt/yesem`, launcher for Desktop only, Depends
   from `dpkg-shlibdeps`). The Linux flavors get their own GTK application ids there.
+- `lib/shared/web_link.dart`, `lib/pincode/{link_source,web_client}.dart`, `tool/web_demo/`:
+  browser → Pin Code Manager deep link (`yesem-pcm://pin?session=…&server=…`), demo page +
+  session server; schemes per flavor via `YESEM_URL_SCHEME` (macOS), registry (Windows
+  installer), hidden `.desktop` entry (Linux `.deb`).
 - `tool/vm/` scripts and checklists for testing in the Ubuntu and Windows VMs.
 
 ## Toolchain
@@ -43,7 +47,7 @@ log a PIN.
 ## Commands
 
 ```sh
-fvm flutter test                                  # 49 hermetic tests must pass
+fvm flutter test                                  # 65 hermetic tests must pass
 fvm flutter analyze                               # must be clean
 fvm flutter build <os> --debug --flavor pincode   # build the helper first
 fvm flutter run -d <os> --flavor desktop          # then run Desktop and click Sign

@@ -75,6 +75,10 @@ ln -s /opt/yesem/desktop/yesem-desktop "$ROOT/usr/bin/yesem-desktop"
 
 # Launcher for Desktop only; the helper is started by Desktop.
 install -m 644 "$TEMPLATES/$APP_ID.desktop" "$ROOT/usr/share/applications/$APP_ID.desktop"
+# Hidden entry for the Pin Code Manager: registers the yesem-pcm:// scheme
+# (browser links); desktop-file-utils' dpkg trigger updates the MIME cache.
+install -m 644 "$TEMPLATES/global.volo.yesem.pincode.desktop" \
+  "$ROOT/usr/share/applications/global.volo.yesem.pincode.desktop"
 for size in 16 32 64 128 256 512; do
   install -D -m 644 "$ICONS/app_icon_$size.png" \
     "$ROOT/usr/share/icons/hicolor/${size}x${size}/apps/$APP_ID.png"

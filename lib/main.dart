@@ -7,6 +7,7 @@ import 'package:window_manager/window_manager.dart';
 import 'app_role.dart';
 import 'desktop/desktop_app.dart';
 import 'mobile/mobile_app.dart';
+import 'pincode/link_source.dart';
 import 'pincode/pin_code_manager_app.dart';
 import 'shared/ipc_protocol.dart';
 
@@ -36,9 +37,12 @@ Future<void> main(List<String> args) async {
     case AppRole.desktop:
       runApp(DesktopApp(roleSource: roleSource));
     case AppRole.pinCodeManager:
+      final launch = LaunchParameters.parse(args, Platform.environment);
       runApp(
         PinCodeManagerApp(
-          launch: LaunchParameters.parse(args, Platform.environment),
+          launch: launch,
+          // Not started by Desktop: maybe by a browser link (yesem-pcm://…).
+          links: launch == null ? platformLinkSource(args) : null,
         ),
       );
   }

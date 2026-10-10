@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Version=1.5
+Name=YesEm Pin Code Manager
+Comment=Enter your ID card PIN for YesEm Desktop and websites
+Exec=/opt/yesem/pincode/yesem-pincode %u
+Icon=global.volo.yesem.desktop
+Terminal=false
+# Not in the applications menu: Desktop and websites open it. The entry exists
+# so browsers can open yesem-pcm:// links (x-scheme-handler) with it.
+NoDisplay=true
+MimeType=x-scheme-handler/yesem-pcm;
+StartupNotify=true
+StartupWMClass=global.volo.yesem.pincode

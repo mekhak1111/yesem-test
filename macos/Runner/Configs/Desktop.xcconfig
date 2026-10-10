@@ -3,3 +3,5 @@
 
 PRODUCT_NAME = YesEm Desktop
 PRODUCT_BUNDLE_IDENTIFIER = global.volo.yesem.desktop
+// URL scheme: reserved; Desktop ignores links for now
+YESEM_URL_SCHEME = yesem-desktop

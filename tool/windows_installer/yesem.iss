@@ -95,6 +95,15 @@ Source: "{#CryptoSuite}"; DestName: "Crypto_Suite_Manager_64.exe"; Flags: dontco
 Name: "{autoprograms}\YesEm Desktop"; Filename: "{app}\desktop\yesem-desktop.exe"; WorkingDir: "{app}\desktop"
 Name: "{autodesktop}\YesEm Desktop"; Filename: "{app}\desktop\yesem-desktop.exe"; WorkingDir: "{app}\desktop"; Tasks: desktopicon
 
+[Registry]
+; Browser links yesem-pcm://pin?session=…&server=… open the Pin Code Manager
+; (lib/shared/web_link.dart). HKA = HKLM for this per-machine install;
+; uninsdeletekey removes the scheme on uninstall.
+Root: HKA; Subkey: "Software\Classes\yesem-pcm"; ValueType: string; ValueName: ""; ValueData: "URL:YesEm Pin Code Manager"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\yesem-pcm"; ValueType: string; ValueName: "URL Protocol"; ValueData: ""
+Root: HKA; Subkey: "Software\Classes\yesem-pcm\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\pincode\yesem-pincode.exe,0"
+Root: HKA; Subkey: "Software\Classes\yesem-pcm\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\pincode\yesem-pincode.exe"" ""%1"""
+
 [Run]
 Filename: "{app}\desktop\yesem-desktop.exe"; Description: "{cm:LaunchProgram,YesEm Desktop}"; Flags: nowait postinstall skipifsilent
 

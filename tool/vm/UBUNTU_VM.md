@@ -113,3 +113,22 @@ Desktop window; otherwise the PIN field ignores text.
   (Settings → Optional features) or VMware Tools, plus Visual Studio 2022 with
   the C++ desktop workload and Developer Mode. Ask and the equivalent scripts
   can be added.
+
+## Browser → Pin Code Manager link (yesem-pcm://)
+
+See README "Browser → Pin Code Manager". In the VM:
+
+```sh
+git pull
+tool/build_desktop_bundles.sh
+tool/web_demo/register_scheme.sh
+fvm dart run tool/web_demo/server.dart
+```
+
+Open http://127.0.0.1:8787 in the VM's browser, click **Sign with ID card**,
+allow opening the Pin Code Manager, enter a PIN, Confirm: the page must show
+"Done" and the PIN. Also check Cancel, and that a second click opens a new
+Pin Code Manager window (no single-instance forwarding on Linux yet).
+After installing the .deb, unregister the dev entry
+(register_scheme.sh --unregister) and repeat: the installed app must handle the link.
+

@@ -131,3 +131,22 @@ Decisions (agreed on the Mac side, mirror the macOS `.pkg`):
 
 When done, zip the changed and new files (not `build\` or `dist\`) to the
 desktop so they can be copied back to the Mac.
+
+## Browser → Pin Code Manager link (yesem-pcm://)
+
+See README "Browser → Pin Code Manager". In the VM:
+
+```powershell
+git pull
+tool\build_desktop_bundles.ps1
+tool\web_demo\register_scheme.ps1
+flutter dart run tool/web_demo/server.dart
+```
+
+Open http://127.0.0.1:8787 in the VM's browser, click **Sign with ID card**,
+allow opening the Pin Code Manager, enter a PIN, Confirm: the page must show
+"Done" and the PIN. Also check Cancel, and that a second click opens a new
+Pin Code Manager window (no single-instance forwarding on Windows yet).
+After installing the setup.exe, unregister the dev entry
+(register_scheme.ps1 -Unregister) and repeat: the installed app must handle the link.
+

@@ -3,3 +3,5 @@
 
 PRODUCT_NAME = YesEm Pin Code Manager
 PRODUCT_BUNDLE_IDENTIFIER = global.volo.yesem.pincode
+// URL scheme: browser → Pin Code Manager links (lib/shared/web_link.dart)
+YESEM_URL_SCHEME = yesem-pcm
